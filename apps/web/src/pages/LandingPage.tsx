@@ -400,153 +400,127 @@ export const LandingPage: React.FC = () => {
       {/* ========================================================= */}
       <section
         id="hero"
-        className="relative pt-8 pb-8 lg:pt-14 lg:pb-12 overflow-hidden bg-gradient-to-br from-[#ebf8f0] via-[#f7fbf8] to-[#edf7f1]"
+        className="relative w-full overflow-hidden bg-[#f7fbf8]"
       >
-        {/* Decorative Top-Right Botanical Leaves */}
-        <img
-          src="/botanical-top-right-hd.png"
-          alt="Botanical foliage accent"
-          className="absolute -top-1 right-0 w-32 sm:w-48 lg:w-64 pointer-events-none z-20 select-none opacity-95 drop-shadow-sm"
-        />
+        <div className="relative w-full max-w-[1920px] mx-auto">
+          {/* Main Hero Artwork Banner */}
+          <div className="relative w-full aspect-[728/312] min-h-[320px] sm:min-h-[460px] md:min-h-[540px] lg:min-h-[640px] xl:min-h-[720px] flex items-center">
+            {/* Background Master Design */}
+            <picture>
+              <source srcSet="/hero-bg-master-hd.webp" type="image/webp" />
+              <img
+                src="/hero-bg-master-hd.jpg"
+                alt="AgroSense AI - Smarter Irrigation, Better Decisions, Sustainable Farming"
+                className="absolute inset-0 w-full h-full object-cover object-center select-none"
+              />
+            </picture>
 
-        {/* Decorative Bottom-Left Botanical Leaves */}
-        <img
-          src="/botanical-bottom-left-hd.png"
-          alt="Botanical foliage accent"
-          className="absolute bottom-16 sm:bottom-20 left-0 w-28 sm:w-44 lg:w-56 pointer-events-none z-20 select-none opacity-95 drop-shadow-sm"
-        />
-
-        {/* Subtle Ambient Radial Glows */}
-        <div className="absolute top-1/4 left-1/3 w-[500px] h-[500px] bg-emerald-200/25 rounded-full blur-3xl pointer-events-none" />
-
-        {/* Agricultural Field with Sprinkler & Telemetry Nodes (Right Side Background) */}
-        <div className="absolute top-0 right-0 bottom-0 w-full lg:w-[58%] pointer-events-none overflow-hidden z-0 flex items-center justify-end">
-          <div className="relative w-full h-full">
-            <img
-              src="/hero-field-clean-hd.png"
-              alt="Agricultural Field with Smart Sprinkler Irrigation"
-              className="w-full h-full object-cover object-left-top opacity-95"
+            {/* Interactive Clickable Hotspots & Overlays */}
+            {/* 1. Get Started Free Button Hotspot */}
+            <Link
+              to="/auth?tab=register"
+              className="absolute left-[8.5%] top-[63.8%] w-[13%] h-[8%] rounded-full cursor-pointer transition-all duration-200 hover:ring-4 hover:ring-emerald-400/50 hover:scale-[1.03] active:scale-[0.98] z-20 focus:outline-none focus:ring-4 focus:ring-emerald-500"
+              title="Get Started Free - Register your account"
+              aria-label="Get Started Free"
             />
-            {/* Soft gradient blend into left text area */}
-            <div className="absolute inset-y-0 left-0 w-28 sm:w-44 lg:w-60 bg-gradient-to-r from-[#f7fbf8] via-[#f7fbf8]/70 to-transparent pointer-events-none" />
-            {/* Top edge subtle fade */}
-            <div className="absolute top-0 inset-x-0 h-14 bg-gradient-to-b from-[#f7fbf8]/40 to-transparent pointer-events-none" />
+
+            {/* 2. Explore Features Button Hotspot */}
+            <button
+              onClick={() => scrollTo('features')}
+              className="absolute left-[23.1%] top-[63.8%] w-[13.5%] h-[8%] rounded-full cursor-pointer transition-all duration-200 hover:ring-4 hover:ring-emerald-400/30 hover:scale-[1.03] active:scale-[0.98] z-20 focus:outline-none focus:ring-4 focus:ring-emerald-500"
+              title="Explore Features - Learn how AgroSense AI works"
+              aria-label="Explore Features"
+            />
+
+            {/* 3. Top-Left Badge Hotspot */}
+            <button
+              onClick={() => scrollTo('technology')}
+              className="absolute left-[5.5%] top-[14%] w-[33%] h-[6.5%] rounded-full cursor-pointer transition hover:opacity-80 z-20"
+              title="FAO-56 Hydrologic Science & Conformal Uncertainty"
+              aria-label="Hydrologic Science Details"
+            />
+
+            {/* 4. Telemetry Node 1: Water Droplet Hotspot */}
+            <div
+              className="group absolute left-[68.5%] top-[18%] w-[5%] aspect-square rounded-full cursor-pointer z-20"
+              title="Soil Moisture: Optimal Root-Zone Depletion"
+            >
+              <div className="absolute inset-0 rounded-full animate-ping bg-sky-400/30 pointer-events-none" />
+              <div className="hidden group-hover:block absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-slate-900/90 backdrop-blur-md text-white text-xs font-semibold rounded-lg shadow-xl whitespace-nowrap pointer-events-none z-30">
+                💧 Live Telemetry: Root-Zone Moisture Optimal
+              </div>
+            </div>
+
+            {/* 5. Telemetry Node 2: Sprout Hotspot */}
+            <div
+              className="group absolute left-[77.5%] top-[12%] w-[5%] aspect-square rounded-full cursor-pointer z-20"
+              title="Crop Health: Mid-Vegetative Stage (Kc = 1.15)"
+            >
+              <div className="absolute inset-0 rounded-full animate-ping bg-emerald-400/30 pointer-events-none" />
+              <div className="hidden group-hover:block absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-slate-900/90 backdrop-blur-md text-white text-xs font-semibold rounded-lg shadow-xl whitespace-nowrap pointer-events-none z-30">
+                🌱 Crop Phenology: Mid-Vegetative Stage
+              </div>
+            </div>
+
+            {/* 6. Telemetry Node 3: Growth Chart Hotspot */}
+            <div
+              className="group absolute left-[88.5%] top-[18%] w-[5%] aspect-square rounded-full cursor-pointer z-20"
+              title="Water Balance: +34% Water Conserved"
+            >
+              <div className="absolute inset-0 rounded-full animate-ping bg-emerald-400/30 pointer-events-none" />
+              <div className="hidden group-hover:block absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-slate-900/90 backdrop-blur-md text-white text-xs font-semibold rounded-lg shadow-xl whitespace-nowrap pointer-events-none z-30">
+                📈 Efficiency Analytics: +34% Water Conserved
+              </div>
+            </div>
+
+            {/* 7. Bottom Bar Item 1: AI-Powered Insights Hotspot */}
+            <button
+              onClick={() => setActiveFeatureModal(featuresList[3])}
+              className="absolute left-[13%] top-[81%] w-[15%] h-[12%] rounded-xl cursor-pointer hover:bg-emerald-500/10 transition z-20"
+              title="Open AI-Powered Insights details"
+              aria-label="AI-Powered Insights"
+            />
+
+            {/* 8. Bottom Bar Item 2: Smart Water Management Hotspot */}
+            <button
+              onClick={() => setActiveFeatureModal(featuresList[5])}
+              className="absolute left-[30%] top-[81%] w-[16%] h-[12%] rounded-xl cursor-pointer hover:bg-sky-500/10 transition z-20"
+              title="Open Smart Water Management details"
+              aria-label="Smart Water Management"
+            />
+
+            {/* 9. Bottom Bar Item 3: Increased Crop Productivity Hotspot */}
+            <button
+              onClick={() => setActiveFeatureModal(featuresList[0])}
+              className="absolute left-[47%] top-[81%] w-[17%] h-[12%] rounded-xl cursor-pointer hover:bg-emerald-500/10 transition z-20"
+              title="Open Crop Productivity details"
+              aria-label="Increased Crop Productivity"
+            />
+
+            {/* 10. Bottom Bar Item 4: Eco-Friendly Agriculture Hotspot */}
+            <button
+              onClick={() => setActiveFeatureModal(featuresList[1])}
+              className="absolute left-[65%] top-[81%] w-[16%] h-[12%] rounded-xl cursor-pointer hover:bg-emerald-500/10 transition z-20"
+              title="Open Eco-Friendly Agriculture details"
+              aria-label="Eco-Friendly Agriculture"
+            />
           </div>
-        </div>
 
-        {/* Hero Content Container */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-2xl text-left space-y-6 pt-4 pb-8 lg:py-10">
-            {/* Pill Badge */}
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#dcf2e4] border border-[#b2e4c2] text-[#0d5c2e] text-xs font-bold shadow-xs">
-              <Leaf className="w-3.5 h-3.5 text-[#0d5c2e]" />
-              <span>FAO-56 Hydrologic Science • Conformal Uncertainty Quantification</span>
-            </div>
-
-            {/* Main Bold Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-black tracking-tight text-[#0a2e18] leading-[1.12]">
-              Smarter Irrigation.<br />
-              <span className="text-[#15803d]">Better Decisions.</span><br />
-              Sustainable Farming.
-            </h1>
-
-            {/* Subtitle */}
-            <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl font-normal">
-              Empowering farmers with intelligent irrigation recommendations, reliable agricultural data and explainable AI.
-            </p>
-
-            {/* Pill Action Buttons */}
-            <div className="flex flex-wrap items-center gap-3.5 pt-2">
-              <Link
-                to="/auth?tab=register"
-                className="inline-flex items-center justify-center space-x-2.5 px-6 sm:px-7 py-3.5 bg-[#0e5c2f] hover:bg-[#0a4724] text-white font-bold rounded-full text-xs sm:text-sm transition shadow-lg shadow-emerald-950/20 group"
-              >
-                <Leaf className="w-4 h-4 text-emerald-200" />
-                <span>Get Started Free</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-              </Link>
-              <button
-                onClick={() => scrollTo('features')}
-                className="inline-flex items-center justify-center space-x-2 px-6 sm:px-7 py-3.5 bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-bold rounded-full text-xs sm:text-sm transition shadow-xs"
-              >
-                <Play className="w-3 h-3 text-[#15803d] fill-[#15803d]" />
-                <span>Explore Features</span>
-              </button>
-            </div>
+          {/* Mobile Fallback Action Buttons for Small Screens (< 640px) */}
+          <div className="sm:hidden px-4 py-4 bg-[#f7fbf8] border-t border-emerald-100 flex flex-col gap-2.5">
+            <Link
+              to="/auth?tab=register"
+              className="w-full py-3 bg-[#0e5c2f] hover:bg-[#0a4724] text-white text-center font-bold rounded-full text-sm shadow-md"
+            >
+              Get Started Free →
+            </Link>
+            <button
+              onClick={() => scrollTo('features')}
+              className="w-full py-2.5 bg-white border border-slate-300 text-slate-800 font-semibold rounded-full text-sm"
+            >
+              ▷ Explore Features
+            </button>
           </div>
-        </div>
-
-        {/* Floating Glassmorphic 4-Column Feature Bar */}
-        <div className="relative z-20 max-w-5xl mx-auto px-4 mt-8 sm:mt-12">
-          <div className="bg-white/90 backdrop-blur-md rounded-2xl sm:rounded-full border border-emerald-100 shadow-xl shadow-emerald-950/5 p-4 sm:px-8 sm:py-3.5 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0 divide-y sm:divide-y-0 sm:divide-x divide-slate-200">
-            {/* Item 1 */}
-            <div className="flex items-center space-x-3 sm:px-4 w-full sm:w-auto justify-center sm:justify-start">
-              <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
-                <Cpu className="w-5 h-5 text-emerald-600" />
-              </div>
-              <div className="text-left">
-                <p className="text-xs sm:text-sm font-bold text-slate-800 leading-tight">AI-Powered</p>
-                <p className="text-xs text-slate-500 font-medium">Insights</p>
-              </div>
-            </div>
-
-            {/* Item 2 */}
-            <div className="flex items-center space-x-3 sm:px-4 w-full sm:w-auto justify-center sm:justify-start pt-3 sm:pt-0">
-              <div className="w-9 h-9 rounded-xl bg-sky-50 text-sky-500 flex items-center justify-center flex-shrink-0">
-                <Droplet className="w-5 h-5 fill-sky-500/20" />
-              </div>
-              <div className="text-left">
-                <p className="text-xs sm:text-sm font-bold text-slate-800 leading-tight">Smart Water</p>
-                <p className="text-xs text-slate-500 font-medium">Management</p>
-              </div>
-            </div>
-
-            {/* Item 3 */}
-            <div className="flex items-center space-x-3 sm:px-4 w-full sm:w-auto justify-center sm:justify-start pt-3 sm:pt-0">
-              <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
-                <Sprout className="w-5 h-5 text-emerald-600" />
-              </div>
-              <div className="text-left">
-                <p className="text-xs sm:text-sm font-bold text-slate-800 leading-tight">Increased Crop</p>
-                <p className="text-xs text-slate-500 font-medium">Productivity</p>
-              </div>
-            </div>
-
-            {/* Item 4 */}
-            <div className="flex items-center space-x-3 sm:px-4 w-full sm:w-auto justify-center sm:justify-start pt-3 sm:pt-0">
-              <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
-                <Globe className="w-5 h-5 text-emerald-600" />
-              </div>
-              <div className="text-left">
-                <p className="text-xs sm:text-sm font-bold text-slate-800 leading-tight">Eco-Friendly</p>
-                <p className="text-xs text-slate-500 font-medium">Agriculture</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Wavy Ribbon Transition */}
-        <div className="w-full overflow-hidden leading-none pointer-events-none mt-6 sm:mt-10">
-          <svg
-            className="relative block w-full h-12 sm:h-16 lg:h-20"
-            viewBox="0 0 1200 120"
-            preserveAspectRatio="none"
-          >
-            <path
-              d="M0,0 C200,60 400,-20 650,40 C900,100 1050,30 1200,50 L1200,120 L0,120 Z"
-              fill="#a7f3d0"
-              fillOpacity="0.45"
-            />
-            <path
-              d="M0,25 C250,80 500,20 750,60 C1000,100 1100,50 1200,70 L1200,120 L0,120 Z"
-              fill="#34d399"
-              fillOpacity="0.35"
-            />
-            <path
-              d="M0,50 C300,100 600,45 850,80 C1050,110 1150,70 1200,85 L1200,120 L0,120 Z"
-              fill="#ffffff"
-            />
-          </svg>
         </div>
       </section>
 
