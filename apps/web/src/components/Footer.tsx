@@ -46,39 +46,39 @@ export const Footer: React.FC = () => {
               <span>Smart Farming. Better Tomorrow.</span>
             </div>
 
-            {/* Social Media Links */}
+            {/* Social Media & Developer Links */}
             <div className="pt-2 flex items-center space-x-3 text-slate-400">
               <a
-                href="https://github.com/AgroSenseAI"
+                href="https://github.com/Sejalsoni30"
                 target="_blank"
                 rel="noopener noreferrer"
-                title="AgroSense AI on GitHub"
-                className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 hover:text-white transition"
+                title="Sejal Soni on GitHub"
+                className="p-2.5 rounded-xl bg-slate-900 hover:bg-forest-900/60 hover:text-white border border-slate-800 transition"
               >
                 <Github className="w-4 h-4" />
               </a>
               <a
-                href="https://www.linkedin.com/company/agrosenseai"
+                href="https://www.linkedin.com/in/sejal-soni-361897303"
                 target="_blank"
                 rel="noopener noreferrer"
-                title="AgroSense AI on LinkedIn"
-                className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 hover:text-white transition"
+                title="Sejal Soni on LinkedIn"
+                className="p-2.5 rounded-xl bg-slate-900 hover:bg-blue-900/60 hover:text-white border border-slate-800 transition"
               >
                 <Linkedin className="w-4 h-4" />
               </a>
               <a
-                href="https://www.instagram.com/agrosenseai"
+                href="https://www.instagram.com/webcraft_studio_404?vrfl=dmd4bmd2bGRubWxy"
                 target="_blank"
                 rel="noopener noreferrer"
-                title="AgroSense AI on Instagram"
-                className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 hover:text-white transition"
+                title="WebCraft Studio on Instagram"
+                className="p-2.5 rounded-xl bg-slate-900 hover:bg-pink-900/60 hover:text-white border border-slate-800 transition"
               >
                 <Instagram className="w-4 h-4" />
               </a>
               <a
-                href="mailto:contact@agrosense.ai"
-                title="Email AgroSense Support"
-                className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 hover:text-white transition"
+                href="mailto:sejalsoni372@gmail.com"
+                title="Email Sejal Soni (sejalsoni372@gmail.com)"
+                className="p-2.5 rounded-xl bg-slate-900 hover:bg-emerald-900/60 hover:text-white border border-slate-800 transition"
               >
                 <Mail className="w-4 h-4" />
               </a>
@@ -243,7 +243,16 @@ export const Footer: React.FC = () => {
           <div className="flex items-center space-x-2">
             <ShieldCheck className="w-4 h-4 text-forest-400" />
             <span>
-              &copy; {currentYear} AgroSense AI • All Rights Reserved. Built with FAO-56 Hydrology & Conformal Prediction.
+              &copy; {currentYear} AgroSense AI • Developed by{' '}
+              <a
+                href="https://github.com/Sejalsoni30"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold text-slate-400 hover:text-forest-400 transition underline underline-offset-2"
+              >
+                Sejal Soni
+              </a>
+              . Grounded in FAO-56 Hydrology & Conformal Prediction.
             </span>
           </div>
 
@@ -254,8 +263,11 @@ export const Footer: React.FC = () => {
             <Link to="/terms" className="hover:text-slate-300 transition">
               Terms & Conditions
             </Link>
-            <a href="mailto:contact@agrosense.ai" className="hover:text-slate-300 transition">
-              contact@agrosense.ai
+            <a
+              href="mailto:sejalsoni372@gmail.com"
+              className="hover:text-slate-300 transition font-medium"
+            >
+              sejalsoni372@gmail.com
             </a>
           </div>
         </div>

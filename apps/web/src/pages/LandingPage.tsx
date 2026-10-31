@@ -1138,7 +1138,7 @@ export const LandingPage: React.FC = () => {
               Get in Touch with Our Agronomy Team
             </h2>
             <p className="text-sm text-slate-600 mt-2">
-              Have questions regarding our hydrologic engine, pilot trials, or academic research collaborations? Send us a message.
+              Have questions regarding our hydrologic engine, pilot trials, or academic research collaborations? Send us a message or contact us directly at <a href="mailto:sejalsoni372@gmail.com" className="text-forest-700 font-bold hover:underline">sejalsoni372@gmail.com</a>.
             </p>
           </div>
 
