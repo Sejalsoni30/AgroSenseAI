@@ -14,7 +14,8 @@ import {
   ArrowLeft,
   ShieldCheck,
   X,
-  UserCheck
+  UserCheck,
+  ExternalLink
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { signInWithGoogle } from '../config/firebase';
@@ -307,9 +308,22 @@ export const AuthPage: React.FC = () => {
 
           {/* Alert Banners */}
           {error && (
-            <div className="mb-4 p-3 bg-rose-50 border border-rose-200 text-rose-800 text-xs rounded-xl flex items-start space-x-2 animate-in fade-in">
-              <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-600 mt-0.5" />
-              <span>{error}</span>
+            <div className="mb-4 p-3.5 bg-rose-50 border border-rose-200 text-rose-800 text-xs rounded-2xl flex flex-col space-y-2 animate-in fade-in">
+              <div className="flex items-start space-x-2">
+                <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-600 mt-0.5" />
+                <span className="leading-relaxed font-medium">{error}</span>
+              </div>
+              {error.includes('Firebase Console') && (
+                <a
+                  href="https://console.firebase.google.com/project/agrosenseai-d4f4d/authentication/providers"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center space-x-1.5 font-bold text-forest-800 hover:text-forest-900 bg-white border border-forest-300 px-3 py-1.5 rounded-xl shadow-xs self-start transition hover:shadow-sm"
+                >
+                  <span>Open Firebase Console to Enable Google</span>
+                  <ExternalLink className="w-3.5 h-3.5 text-forest-700" />
+                </a>
+              )}
             </div>
           )}
 
