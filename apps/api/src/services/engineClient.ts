@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const ENGINE_BASE_URL = process.env.ENGINE_URL || 'http://127.0.0.1:8000';
+const rawEngineUrl = (process.env.ENGINE_URL || 'http://127.0.0.1:8000').trim();
+const ENGINE_BASE_URL = rawEngineUrl.startsWith('http://') || rawEngineUrl.startsWith('https://')
+  ? rawEngineUrl
+  : `http://${rawEngineUrl}:8000`;
 
 export interface EngineEvaluatePayload {
   zone_id?: string;
