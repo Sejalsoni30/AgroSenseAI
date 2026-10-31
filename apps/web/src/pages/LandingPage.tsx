@@ -28,9 +28,8 @@ import {
   RefreshCw,
   ExternalLink,
   BookOpen,
-  Sprout,
-  Globe,
-  Play
+  Zap,
+  Globe
 } from 'lucide-react';
 import { Footer } from '../components/Footer';
 import { ConfidenceBadge } from '../components/ConfidenceBadge';
@@ -327,13 +326,13 @@ export const LandingPage: React.FC = () => {
           <div className="hidden sm:flex items-center space-x-3">
             <Link
               to="/auth?tab=login"
-              className="px-4 py-2 text-xs font-bold text-slate-700 hover:text-forest-700 hover:bg-slate-50 rounded-full transition"
+              className="px-4 py-2.5 text-xs font-bold text-slate-700 hover:text-forest-700 hover:bg-slate-50 rounded-xl transition"
             >
               Login
             </Link>
             <Link
               to="/auth?tab=register"
-              className="px-5 py-2.5 bg-[#0e5c2f] hover:bg-[#0a4724] text-white text-xs font-bold rounded-full transition shadow-md shadow-emerald-950/15 flex items-center space-x-1.5"
+              className="px-5 py-2.5 bg-forest-700 hover:bg-forest-800 text-white text-xs font-bold rounded-xl transition shadow-md shadow-forest-900/15 flex items-center space-x-1.5"
             >
               <span>Get Started</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -396,130 +395,145 @@ export const LandingPage: React.FC = () => {
       </header>
 
       {/* ========================================================= */}
-      {/* 2. HERO SECTION */}
+      {/* 2. HERO SECTION (Side-by-Side: Text + Light Shaded Image) */}
       {/* ========================================================= */}
-      <section
-        id="hero"
-        className="relative w-full overflow-hidden bg-[#f7fbf8]"
-      >
-        <div className="relative w-full max-w-[1920px] mx-auto">
-          {/* Main Hero Artwork Banner */}
-          <div className="relative w-full aspect-[728/312] min-h-[320px] sm:min-h-[460px] md:min-h-[540px] lg:min-h-[640px] xl:min-h-[720px] flex items-center">
-            {/* Background Master Design */}
-            <picture>
-              <source srcSet="/hero-bg-master-hd.webp" type="image/webp" />
-              <img
-                src="/hero-bg-master-hd.jpg"
-                alt="AgroSense AI - Smarter Irrigation, Better Decisions, Sustainable Farming"
-                className="absolute inset-0 w-full h-full object-cover object-center select-none"
-              />
-            </picture>
+      <section id="hero" className="relative pt-10 pb-16 lg:pt-16 lg:pb-28 overflow-hidden bg-gradient-to-b from-forest-50/50 via-slate-50 to-white">
+        {/* Subtle Decorative Background Rings */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[720px] h-[720px] bg-forest-100/40 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-10 right-10 w-72 h-72 bg-emerald-100/30 rounded-full blur-2xl pointer-events-none" />
 
-            {/* Interactive Clickable Hotspots & Overlays */}
-            {/* 1. Get Started Free Button Hotspot */}
-            <Link
-              to="/auth?tab=register"
-              className="absolute left-[8.5%] top-[63.8%] w-[13%] h-[8%] rounded-full cursor-pointer transition-all duration-200 hover:ring-4 hover:ring-emerald-400/50 hover:scale-[1.03] active:scale-[0.98] z-20 focus:outline-none focus:ring-4 focus:ring-emerald-500"
-              title="Get Started Free - Register your account"
-              aria-label="Get Started Free"
-            />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+            {/* Left Side: Headline, Pitch & CTAs */}
+            <div className="lg:col-span-7 space-y-6 text-left">
+              {/* Pill Badge */}
+              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-forest-100 border border-forest-300/80 text-forest-900 text-xs font-bold shadow-xs">
+                <ShieldCheck className="w-4 h-4 text-forest-700" />
+                <span>AI-Powered Irrigation Intelligence • FAO-56 Grounded</span>
+              </div>
 
-            {/* 2. Explore Features Button Hotspot */}
-            <button
-              onClick={() => scrollTo('features')}
-              className="absolute left-[23.1%] top-[63.8%] w-[13.5%] h-[8%] rounded-full cursor-pointer transition-all duration-200 hover:ring-4 hover:ring-emerald-400/30 hover:scale-[1.03] active:scale-[0.98] z-20 focus:outline-none focus:ring-4 focus:ring-emerald-500"
-              title="Explore Features - Learn how AgroSense AI works"
-              aria-label="Explore Features"
-            />
+              {/* Main Heading */}
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-950 leading-[1.12]">
+                Smarter Irrigation. <br />
+                <span className="text-forest-700">Better Decisions.</span> <br />
+                Sustainable Farming.
+              </h1>
 
-            {/* 3. Top-Left Badge Hotspot */}
-            <button
-              onClick={() => scrollTo('technology')}
-              className="absolute left-[5.5%] top-[14%] w-[33%] h-[6.5%] rounded-full cursor-pointer transition hover:opacity-80 z-20"
-              title="FAO-56 Hydrologic Science & Conformal Uncertainty"
-              aria-label="Hydrologic Science Details"
-            />
+              {/* Description */}
+              <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl">
+                Empowering farmers with intelligent irrigation recommendations, reliable agricultural data and explainable AI.
+              </p>
 
-            {/* 4. Telemetry Node 1: Water Droplet Hotspot */}
-            <div
-              className="group absolute left-[68.5%] top-[18%] w-[5%] aspect-square rounded-full cursor-pointer z-20"
-              title="Soil Moisture: Optimal Root-Zone Depletion"
-            >
-              <div className="absolute inset-0 rounded-full animate-ping bg-sky-400/30 pointer-events-none" />
-              <div className="hidden group-hover:block absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-slate-900/90 backdrop-blur-md text-white text-xs font-semibold rounded-lg shadow-xl whitespace-nowrap pointer-events-none z-30">
-                💧 Live Telemetry: Root-Zone Moisture Optimal
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-1">
+                <Link
+                  to="/auth?tab=register"
+                  className="px-7 py-3.5 bg-forest-700 hover:bg-forest-800 text-white font-extrabold rounded-2xl text-sm transition shadow-lg shadow-forest-900/20 flex items-center justify-center space-x-2 group"
+                >
+                  <span>Get Started Free</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+                <button
+                  onClick={() => scrollTo('features')}
+                  className="px-7 py-3.5 bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-bold rounded-2xl text-sm transition shadow-xs flex items-center justify-center"
+                >
+                  Explore Features
+                </button>
+              </div>
+
+              {/* Micro Trust Stats */}
+              <div className="pt-3 flex flex-wrap items-center gap-y-2 gap-x-6 text-xs text-slate-500 font-medium border-t border-slate-200/70">
+                <div className="flex items-center space-x-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-forest-600" />
+                  <span>0 Uncalibrated Predictions</span>
+                </div>
+                <div className="flex items-center space-x-1.5">
+                  <Zap className="w-4 h-4 text-forest-600" />
+                  <span>&lt; 10ms Inference Time</span>
+                </div>
+                <div className="flex items-center space-x-1.5">
+                  <Globe className="w-4 h-4 text-forest-600" />
+                  <span>Bilingual (EN / HI)</span>
+                </div>
               </div>
             </div>
 
-            {/* 5. Telemetry Node 2: Sprout Hotspot */}
-            <div
-              className="group absolute left-[77.5%] top-[12%] w-[5%] aspect-square rounded-full cursor-pointer z-20"
-              title="Crop Health: Mid-Vegetative Stage (Kc = 1.15)"
-            >
-              <div className="absolute inset-0 rounded-full animate-ping bg-emerald-400/30 pointer-events-none" />
-              <div className="hidden group-hover:block absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-slate-900/90 backdrop-blur-md text-white text-xs font-semibold rounded-lg shadow-xl whitespace-nowrap pointer-events-none z-30">
-                🌱 Crop Phenology: Mid-Vegetative Stage
+            {/* Right Side: Light-Shaded Agricultural Image Showcase */}
+            <div className="lg:col-span-5 relative">
+              {/* Soft Ambient Glow / Lighting behind image */}
+              <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-tr from-forest-200/50 via-emerald-100/40 to-teal-100/30 rounded-3xl blur-2xl -z-10" />
+
+              {/* Main Image Container with Soft Borders & Lighting */}
+              <div className="relative rounded-3xl overflow-hidden border border-forest-200/80 shadow-2xl shadow-forest-950/10 bg-white/40 backdrop-blur-xs group">
+                <img
+                  src="/irrigation-hero-field.jpg"
+                  alt="AgroSense AI Smart Irrigation Field"
+                  className="w-full h-[360px] sm:h-[420px] lg:h-[450px] object-cover object-center group-hover:scale-102 transition-transform duration-700"
+                />
+
+                {/* Light shaded gradient overlay for soft, natural lighting */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-forest-950/10 to-transparent pointer-events-none" />
+
+                {/* Floating Telemetry Badge 1: Top-Right */}
+                <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-xl shadow-lg border border-slate-100/80 flex items-center space-x-2.5">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                  </span>
+                  <div className="text-left">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Physics Engine</p>
+                    <p className="text-xs font-extrabold text-slate-800">FAO-56 Calibrated</p>
+                  </div>
+                </div>
+
+                {/* Floating Telemetry Badge 2: Bottom-Left */}
+                <div className="absolute bottom-4 left-4 right-4 sm:right-auto bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-xl shadow-lg border border-slate-100/80 flex items-center space-x-3">
+                  <div className="w-8 h-8 rounded-lg bg-forest-100 text-forest-700 flex items-center justify-center font-bold">
+                    <Droplet className="w-4 h-4 text-forest-700" />
+                  </div>
+                  <div className="text-left">
+                    <div className="flex items-center space-x-1.5">
+                      <p className="text-xs font-extrabold text-slate-900">Live Soil Moisture</p>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-forest-100 text-forest-800 font-bold">Optimal</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500">Volumetric Water: 24.2% • Root Zone</p>
+                  </div>
+                </div>
               </div>
             </div>
-
-            {/* 6. Telemetry Node 3: Growth Chart Hotspot */}
-            <div
-              className="group absolute left-[88.5%] top-[18%] w-[5%] aspect-square rounded-full cursor-pointer z-20"
-              title="Water Balance: +34% Water Conserved"
-            >
-              <div className="absolute inset-0 rounded-full animate-ping bg-emerald-400/30 pointer-events-none" />
-              <div className="hidden group-hover:block absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-slate-900/90 backdrop-blur-md text-white text-xs font-semibold rounded-lg shadow-xl whitespace-nowrap pointer-events-none z-30">
-                📈 Efficiency Analytics: +34% Water Conserved
-              </div>
-            </div>
-
-            {/* 7. Bottom Bar Item 1: AI-Powered Insights Hotspot */}
-            <button
-              onClick={() => setActiveFeatureModal(featuresList[3])}
-              className="absolute left-[13%] top-[81%] w-[15%] h-[12%] rounded-xl cursor-pointer hover:bg-emerald-500/10 transition z-20"
-              title="Open AI-Powered Insights details"
-              aria-label="AI-Powered Insights"
-            />
-
-            {/* 8. Bottom Bar Item 2: Smart Water Management Hotspot */}
-            <button
-              onClick={() => setActiveFeatureModal(featuresList[5])}
-              className="absolute left-[30%] top-[81%] w-[16%] h-[12%] rounded-xl cursor-pointer hover:bg-sky-500/10 transition z-20"
-              title="Open Smart Water Management details"
-              aria-label="Smart Water Management"
-            />
-
-            {/* 9. Bottom Bar Item 3: Increased Crop Productivity Hotspot */}
-            <button
-              onClick={() => setActiveFeatureModal(featuresList[0])}
-              className="absolute left-[47%] top-[81%] w-[17%] h-[12%] rounded-xl cursor-pointer hover:bg-emerald-500/10 transition z-20"
-              title="Open Crop Productivity details"
-              aria-label="Increased Crop Productivity"
-            />
-
-            {/* 10. Bottom Bar Item 4: Eco-Friendly Agriculture Hotspot */}
-            <button
-              onClick={() => setActiveFeatureModal(featuresList[1])}
-              className="absolute left-[65%] top-[81%] w-[16%] h-[12%] rounded-xl cursor-pointer hover:bg-emerald-500/10 transition z-20"
-              title="Open Eco-Friendly Agriculture details"
-              aria-label="Eco-Friendly Agriculture"
-            />
           </div>
 
-          {/* Mobile Fallback Action Buttons for Small Screens (< 640px) */}
-          <div className="sm:hidden px-4 py-4 bg-[#f7fbf8] border-t border-emerald-100 flex flex-col gap-2.5">
-            <Link
-              to="/auth?tab=register"
-              className="w-full py-3 bg-[#0e5c2f] hover:bg-[#0a4724] text-white text-center font-bold rounded-full text-sm shadow-md"
-            >
-              Get Started Free →
-            </Link>
-            <button
-              onClick={() => scrollTo('features')}
-              className="w-full py-2.5 bg-white border border-slate-300 text-slate-800 font-semibold rounded-full text-sm"
-            >
-              ▷ Explore Features
-            </button>
+          {/* Hero Highlights Triad */}
+          <div className="mt-14 sm:mt-16 grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="p-5 bg-white/90 backdrop-blur-md rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4 hover:border-forest-300 transition-colors">
+              <div className="w-12 h-12 rounded-xl bg-forest-100 text-forest-800 flex items-center justify-center flex-shrink-0">
+                <Droplet className="w-6 h-6 text-forest-700" />
+              </div>
+              <div>
+                <h2 className="font-bold text-sm text-slate-900">Intelligent Irrigation</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Dual-method FAO-56 Penman-Monteith &amp; Hargreaves</p>
+              </div>
+            </div>
+
+            <div className="p-5 bg-white/90 backdrop-blur-md rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4 hover:border-purple-300 transition-colors">
+              <div className="w-12 h-12 rounded-xl bg-purple-100 text-purple-800 flex items-center justify-center flex-shrink-0">
+                <Sparkles className="w-6 h-6 text-purple-700" />
+              </div>
+              <div>
+                <h2 className="font-bold text-sm text-slate-900">Explainable AI</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Wachter counterfactuals in English &amp; Hindi</p>
+              </div>
+            </div>
+
+            <div className="p-5 bg-white/90 backdrop-blur-md rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4 hover:border-blue-300 transition-colors">
+              <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center flex-shrink-0">
+                <Activity className="w-6 h-6 text-blue-700" />
+              </div>
+              <div>
+                <h2 className="font-bold text-sm text-slate-900">Water Optimization</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Calibrated abstention eliminates over-watering</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
