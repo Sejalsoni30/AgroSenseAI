@@ -44,7 +44,12 @@ export function App() {
   return (
     <AuthProvider>
       <FarmProvider>
-        <BrowserRouter>
+        <BrowserRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true
+          }}
+        >
           <Routes>
             {/* Public Marketing & Combined Auth Routes */}
             <Route path="/" element={<LandingPage />} />
