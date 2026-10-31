@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:7.0
+    container_name: agrosense-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - agrosense-network
+
+  engine:
+    build:
+      context: .
+      dockerfile: services/engine/Dockerfile
+    container_name: agrosense-engine
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+    networks:
+      - agrosense-network
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: agrosense-api
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongo:27017/agrosense
+      - ENGINE_URL=http://engine:8000
+      - JWT_SECRET=agrosense_super_secret_jwt_key_2026
+    depends_on:
+      - mongo
+      - engine
+    networks:
+      - agrosense-network
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: agrosense-web
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    networks:
+      - agrosense-network
+
+networks:
+  agrosense-network:
+    driver: bridge
+
+volumes:
+  mongo_data:
+

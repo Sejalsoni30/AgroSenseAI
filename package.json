@@ -1,0 +1,20 @@
+{
+  "name": "agrosense-ai-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AgroSenseAI – Confidence-Aware & Explainable Irrigation Intelligence Platform",
+  "scripts": {
+    "install:all": "npm install && cd apps/api && npm install && cd ../web && npm install",
+    "dev:engine": "python -m uvicorn services.engine.main:app --host 127.0.0.1 --port 8000 --reload",
+    "dev:api": "cd apps/api && npm run dev",
+    "dev:web": "cd apps/web && npm run dev",
+    "dev": "concurrently -k -p \"[{name}]\" -n \"ENGINE,API,WEB\" -c \"magenta,cyan,green\" \"npm run dev:engine\" \"npm run dev:api\" \"npm run dev:web\"",
+    "seed": "cd apps/api && npm run seed",
+    "test:engine": "pytest services/engine/tests",
+    "test:api": "cd apps/api && npm test"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
+
