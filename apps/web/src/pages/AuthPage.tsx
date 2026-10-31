@@ -130,52 +130,48 @@ export const AuthPage: React.FC = () => {
   // 3. Handle Google Authentication via Firebase SDK
   const handleGoogleAuth = async () => {
     setError(null);
+    setSuccess(null);
     setLoading(true);
 
     try {
-      let idToken = '';
-      let email = '';
-      let name = '';
-      let photoURL = '';
-      let uid = '';
+      // 1. Trigger Google Popup for user to choose their email account
+      const firebaseResult = await signInWithGoogle();
+      const user = firebaseResult.user;
+      const idToken = firebaseResult.idToken;
 
-      try {
-        // Trigger real Firebase Google popup
-        const firebaseResult = await signInWithGoogle();
-        idToken = firebaseResult.idToken;
-        email = firebaseResult.user.email || '';
-        name = firebaseResult.user.displayName || '';
-        photoURL = firebaseResult.user.photoURL || '';
-        uid = firebaseResult.user.uid || '';
-      } catch (fbErr: any) {
-        if (fbErr.code === 'auth/popup-closed-by-user' || fbErr.code === 'auth/cancelled-popup-request') {
-          setLoading(false);
-          return;
-        }
-        console.warn('Firebase popup notice:', fbErr.message);
-        // Fallback for developer environments or offline testing
-        email = activeTab === 'login' ? (loginEmail || 'grower.google@agrosense.ai') : (regEmail || 'grower.google@agrosense.ai');
-        name = activeTab === 'register' && regName ? regName : 'Google Agronomist';
-        uid = 'google_user_' + Math.random().toString(36).substring(2, 9);
+      if (!user.email) {
+        throw new Error('Google account did not return a valid email address.');
       }
 
+      // 2. Transmit verified Google credentials to AgroSense backend
       const res = await axios.post('/api/auth/google', {
         credential: idToken,
-        email,
-        name,
-        photoURL,
-        uid,
+        email: user.email,
+        name: user.displayName || user.email.split('@')[0],
+        photoURL: user.photoURL || undefined,
+        uid: user.uid,
         role: regRole,
         preferredLanguage: regLanguage
       });
 
-      setSuccess('Signed in with Google successfully!');
+      // 3. Authenticated successfully: save token, store user and navigate to dashboard
+      setSuccess(`Authenticated as ${user.email}! Opening AgroSense AI Dashboard...`);
       setTimeout(() => {
         login(res.data.token, res.data.user);
         navigate('/dashboard');
-      }, 500);
+      }, 600);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Google authentication encountered an error. Please try again.');
+      if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
+        setError('Google sign-in was cancelled. Please choose your Google account to open the dashboard.');
+      } else if (err.code === 'auth/operation-not-allowed') {
+        setError('Google Sign-In is not enabled yet in your Firebase Console. In Firebase Console, go to Authentication > Sign-in method > Enable Google.');
+      } else if (err.code === 'auth/unauthorized-domain') {
+        setError('Domain (localhost) is not authorized in Firebase Console > Authentication > Settings > Authorized domains.');
+      } else if (err.code === 'auth/network-request-failed') {
+        setError('Network connectivity issue contacting Google authentication servers.');
+      } else {
+        setError(err.response?.data?.error || err.message || 'Google authentication encountered an error. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -399,108 +395,147 @@ export const AuthPage: React.FC = () => {
 
               {/* TAB 1: LOGIN */}
               {activeTab === 'login' && (
-                <form className="space-y-4" onSubmit={handleLoginSubmit}>
+                <div className="space-y-4">
+                  {/* Primary Google Login Button */}
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                      Email Address
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      value={loginEmail}
-                      onChange={(e) => setLoginEmail(e.target.value)}
-                      placeholder="agronomist@farm.org"
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-forest-600 focus:bg-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                      Password
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={showLoginPassword ? 'text' : 'password'}
-                        required
-                        value={loginPassword}
-                        onChange={(e) => setLoginPassword(e.target.value)}
-                        placeholder="••••••••"
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-forest-600 focus:bg-white pr-10"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowLoginPassword(!showLoginPassword)}
-                        className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 focus:outline-none"
-                      >
-                        {showLoginPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Remember Me & Forgot Password */}
-                  <div className="flex items-center justify-between text-xs pt-1">
-                    <label className="flex items-center space-x-2 text-slate-600 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={rememberMe}
-                        onChange={(e) => setRememberMe(e.target.checked)}
-                        className="w-4 h-4 text-forest-700 rounded focus:ring-forest-500 accent-forest-700 cursor-pointer"
-                      />
-                      <span>Remember me</span>
-                    </label>
                     <button
                       type="button"
-                      onClick={() => {
-                        setIsForgotView(true);
-                        setForgotEmail(loginEmail);
-                      }}
-                      className="font-semibold text-forest-700 hover:text-forest-800 hover:underline"
+                      onClick={handleGoogleAuth}
+                      disabled={loading}
+                      className="w-full py-3 px-4 bg-white hover:bg-slate-50 border-2 border-forest-600/40 hover:border-forest-600 rounded-2xl text-xs sm:text-sm font-bold text-slate-800 transition flex items-center justify-center space-x-2.5 shadow-sm group"
                     >
-                      Forgot password?
+                      <svg className="w-5 h-5 group-hover:scale-105 transition" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                      </svg>
+                      <span>Sign In with Google</span>
                     </button>
+                    <p className="text-[11px] text-center text-slate-500 mt-1.5 font-medium">
+                      Select your Google email account to access dashboard
+                    </p>
                   </div>
 
-                  {/* Sign In Button */}
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full mt-2 py-3 px-4 bg-forest-700 hover:bg-forest-800 text-white font-bold rounded-xl text-sm transition shadow-md shadow-forest-900/10 flex items-center justify-center space-x-2 disabled:opacity-60"
-                  >
-                    <LogIn className="w-4 h-4" />
-                    <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
-                  </button>
-
                   {/* Divider */}
-                  <div className="relative my-4">
+                  <div className="relative my-2">
                     <div className="absolute inset-0 flex items-center">
                       <div className="w-full border-t border-slate-200" />
                     </div>
-                    <div className="relative flex justify-center text-[11px] uppercase">
-                      <span className="bg-white px-2 text-slate-400 font-bold">OR</span>
+                    <div className="relative flex justify-center text-[10px] uppercase font-bold tracking-wider">
+                      <span className="bg-white px-2 text-slate-400">or sign in with password</span>
                     </div>
                   </div>
 
-                  {/* Continue with Google Button */}
-                  <button
-                    type="button"
-                    onClick={handleGoogleAuth}
-                    disabled={loading}
-                    className="w-full py-2.5 px-4 bg-white hover:bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm font-bold text-slate-700 transition flex items-center justify-center space-x-2 shadow-xs"
-                  >
-                    <svg className="w-4 h-4" viewBox="0 0 24 24">
-                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                    </svg>
-                    <span>Continue with Google</span>
-                  </button>
-                </form>
+                  <form className="space-y-4" onSubmit={handleLoginSubmit}>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        value={loginEmail}
+                        onChange={(e) => setLoginEmail(e.target.value)}
+                        placeholder="agronomist@farm.org"
+                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-forest-600 focus:bg-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                        Password
+                      </label>
+                      <div className="relative">
+                        <input
+                          type={showLoginPassword ? 'text' : 'password'}
+                          required
+                          value={loginPassword}
+                          onChange={(e) => setLoginPassword(e.target.value)}
+                          placeholder="••••••••"
+                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-forest-600 focus:bg-white pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowLoginPassword(!showLoginPassword)}
+                          className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 focus:outline-none"
+                        >
+                          {showLoginPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Remember Me & Forgot Password */}
+                    <div className="flex items-center justify-between text-xs pt-1">
+                      <label className="flex items-center space-x-2 text-slate-600 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={rememberMe}
+                          onChange={(e) => setRememberMe(e.target.checked)}
+                          className="w-4 h-4 text-forest-700 rounded focus:ring-forest-500 accent-forest-700 cursor-pointer"
+                        />
+                        <span>Remember me</span>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsForgotView(true);
+                          setForgotEmail(loginEmail);
+                        }}
+                        className="font-semibold text-forest-700 hover:text-forest-800 hover:underline"
+                      >
+                        Forgot password?
+                      </button>
+                    </div>
+
+                    {/* Sign In Button */}
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full mt-2 py-3 px-4 bg-forest-700 hover:bg-forest-800 text-white font-bold rounded-xl text-sm transition shadow-md shadow-forest-900/10 flex items-center justify-center space-x-2 disabled:opacity-60"
+                    >
+                      <LogIn className="w-4 h-4" />
+                      <span>{loading ? 'Authenticating...' : 'Sign In with Password'}</span>
+                    </button>
+                  </form>
+                </div>
               )}
 
               {/* TAB 2: REGISTER */}
               {activeTab === 'register' && (
-                <form className="space-y-3.5" onSubmit={handleRegisterSubmit}>
+                <div className="space-y-4">
+                  {/* Primary Google Register Button */}
+                  <div>
+                    <button
+                      type="button"
+                      onClick={handleGoogleAuth}
+                      disabled={loading}
+                      className="w-full py-3 px-4 bg-white hover:bg-slate-50 border-2 border-forest-600/40 hover:border-forest-600 rounded-2xl text-xs sm:text-sm font-bold text-slate-800 transition flex items-center justify-center space-x-2.5 shadow-sm group"
+                    >
+                      <svg className="w-5 h-5 group-hover:scale-105 transition" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                      </svg>
+                      <span>Sign Up with Google</span>
+                    </button>
+                    <p className="text-[11px] text-center text-slate-500 mt-1.5 font-medium">
+                      One-click account registration using Google
+                    </p>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="relative my-2">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-slate-200" />
+                    </div>
+                    <div className="relative flex justify-center text-[10px] uppercase font-bold tracking-wider">
+                      <span className="bg-white px-2 text-slate-400">or register with email</span>
+                    </div>
+                  </div>
+
+                  <form className="space-y-3.5" onSubmit={handleRegisterSubmit}>
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                       Full Name
@@ -634,32 +669,8 @@ export const AuthPage: React.FC = () => {
                     <span>{loading ? 'Creating Profile...' : 'Create Account'}</span>
                   </button>
 
-                  {/* Divider */}
-                  <div className="relative my-3">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-slate-200" />
-                    </div>
-                    <div className="relative flex justify-center text-[11px] uppercase">
-                      <span className="bg-white px-2 text-slate-400 font-bold">OR</span>
-                    </div>
-                  </div>
-
-                  {/* Continue with Google */}
-                  <button
-                    type="button"
-                    onClick={handleGoogleAuth}
-                    disabled={loading}
-                    className="w-full py-2.5 px-4 bg-white hover:bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm font-bold text-slate-700 transition flex items-center justify-center space-x-2 shadow-xs"
-                  >
-                    <svg className="w-4 h-4" viewBox="0 0 24 24">
-                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                    </svg>
-                    <span>Continue with Google</span>
-                  </button>
-                </form>
+                  </form>
+                </div>
               )}
             </div>
           )}
