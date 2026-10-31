@@ -165,12 +165,14 @@ export const AuthPage: React.FC = () => {
       if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
         setError('Google sign-in was cancelled. Please choose your Google account to open the dashboard.');
       } else if (
+        err.code === 'auth/operation-not-allowed' ||
+        err.message?.includes('operation-not-allowed') ||
         err.message?.includes('CONFIGURATION_NOT_FOUND') ||
         err.code === 'auth/configuration-not-found' ||
         err.code === 'auth/internal-error'
       ) {
         setError(
-          'Google Sign-In is not enabled yet in your Firebase Console for project agrosenseai-d4f4d. Please open Firebase Console and enable Google provider.'
+          'Google Sign-In is disabled in your Firebase Console for project agrosenseai-d4f4d. Please click "Open Firebase Console to Enable Google" below to turn it ON. Once turned ON, the Google account selection popup (like your 2nd image) will open automatically!'
         );
       } else {
         setError(err.response?.data?.error || err.message || 'Google authentication encountered an error.');
