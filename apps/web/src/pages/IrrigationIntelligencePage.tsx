@@ -321,7 +321,7 @@ export const IrrigationIntelligencePage: React.FC = () => {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
+                    <label className="text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
                       <span>Soil Moisture (% Volumetric θ)</span>
                       <span className="text-[10px] text-forest-700 font-semibold">Active Root Zone</span>
                     </label>
