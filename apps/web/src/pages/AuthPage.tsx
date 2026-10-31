@@ -56,11 +56,6 @@ export const AuthPage: React.FC = () => {
   const [newPassword, setNewPassword] = useState('');
   const [forgotStep, setForgotStep] = useState<'request' | 'reset'>('request');
 
-  // Google Account Chooser Modal state (active when choosing Google account)
-  const [showGoogleChooser, setShowGoogleChooser] = useState(false);
-  const [customGoogleEmail, setCustomGoogleEmail] = useState('');
-  const [customGoogleName, setCustomGoogleName] = useState('');
-
   useEffect(() => {
     const tabParam = searchParams.get('tab');
     if (tabParam === 'register' || tabParam === 'login') {
@@ -135,14 +130,14 @@ export const AuthPage: React.FC = () => {
     }
   };
 
-  // 3. Handle Google Authentication via Firebase SDK with Intelligent Chooser
+  // 3. Handle Google Authentication via Firebase SDK
   const handleGoogleAuth = async () => {
     setError(null);
     setSuccess(null);
     setLoading(true);
 
     try {
-      // 1. Trigger Firebase Google Popup to choose email
+      // 1. Trigger official Google Account Selection popup
       const firebaseResult = await signInWithGoogle();
       const user = firebaseResult.user;
       const idToken = firebaseResult.idToken;
@@ -151,58 +146,35 @@ export const AuthPage: React.FC = () => {
         throw new Error('Google account did not return a valid email address.');
       }
 
-      await completeGoogleLogin(
-        user.email,
-        user.displayName || user.email.split('@')[0],
-        user.photoURL || undefined,
-        user.uid,
-        idToken
-      );
-    } catch (err: any) {
-      if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
-        setError('Google sign-in was cancelled. Please choose your Google account to open the dashboard.');
-        setLoading(false);
-        return;
-      }
-
-      // If Firebase returns CONFIGURATION_NOT_FOUND or needs console activation,
-      // seamlessly open the Google Account Chooser dialog so the user can select their email!
-      console.info('Opening AgroSense Google Account Selector:', err.message || err);
-      setShowGoogleChooser(true);
-      setLoading(false);
-    }
-  };
-
-  // Complete login with chosen Google Account
-  const completeGoogleLogin = async (
-    email: string,
-    name: string,
-    photoURL?: string,
-    uid?: string,
-    idToken?: string
-  ) => {
-    setLoading(true);
-    setError(null);
-
-    try {
       const res = await axios.post('/api/auth/google', {
-        credential: idToken || 'google_oauth_token_' + Date.now(),
-        email: email.trim().toLowerCase(),
-        name: name.trim() || email.split('@')[0],
-        photoURL,
-        uid: uid || 'google_uid_' + Math.random().toString(36).substring(2, 9),
+        credential: idToken,
+        email: user.email,
+        name: user.displayName || user.email.split('@')[0],
+        photoURL: user.photoURL || undefined,
+        uid: user.uid,
         role: regRole,
         preferredLanguage: regLanguage
       });
 
-      setShowGoogleChooser(false);
-      setSuccess(`Authenticated as ${email}! Opening AgroSense AI Dashboard...`);
+      setSuccess(`Authenticated as ${user.email}! Opening AgroSense AI Dashboard...`);
       setTimeout(() => {
         login(res.data.token, res.data.user);
         navigate('/dashboard');
       }, 500);
-    } catch (apiErr: any) {
-      setError(apiErr.response?.data?.error || 'Failed to authenticate Google user on backend.');
+    } catch (err: any) {
+      if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
+        setError('Google sign-in was cancelled. Please choose your Google account to open the dashboard.');
+      } else if (
+        err.message?.includes('CONFIGURATION_NOT_FOUND') ||
+        err.code === 'auth/configuration-not-found' ||
+        err.code === 'auth/internal-error'
+      ) {
+        setError(
+          'Google Sign-In is not enabled yet in your Firebase Console for project agrosenseai-d4f4d. Please open Firebase Console and enable Google provider.'
+        );
+      } else {
+        setError(err.response?.data?.error || err.message || 'Google authentication encountered an error.');
+      }
     } finally {
       setLoading(false);
     }
@@ -726,174 +698,6 @@ export const AuthPage: React.FC = () => {
           <span>Grounded in FAO-56 Agronomic Hydrology • Protected by JWT & Bcrypt</span>
         </div>
       </div>
-
-      {/* ========================================================= */}
-      {/* GOOGLE ACCOUNT CHOOSER MODAL */}
-      {/* ========================================================= */}
-      {showGoogleChooser && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-slate-200 space-y-5 relative">
-            {/* Google Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div className="flex items-center space-x-2.5">
-                <svg className="w-6 h-6" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                </svg>
-                <div>
-                  <h3 className="font-extrabold text-base text-slate-900 leading-tight">
-                    Sign in with Google
-                  </h3>
-                  <p className="text-[11px] text-slate-500">
-                    Choose an account to continue to AgroSense AI
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowGoogleChooser(false);
-                  setError('Google sign-in was cancelled. Please choose your Google account to open the dashboard.');
-                }}
-                className="text-slate-400 hover:text-slate-600 p-1.5 rounded-xl hover:bg-slate-100 transition"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Account Options List */}
-            <div className="space-y-2.5">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
-                Select Google Account
-              </span>
-
-              {/* Option 1: Sejal Soni */}
-              <button
-                type="button"
-                onClick={() =>
-                  completeGoogleLogin(
-                    'sejalsoni372@gmail.com',
-                    'Sejal Soni',
-                    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100'
-                  )
-                }
-                disabled={loading}
-                className="w-full p-3 rounded-2xl border border-slate-200 hover:border-forest-600 hover:bg-forest-50/50 transition flex items-center space-x-3 text-left group"
-              >
-                <div className="w-10 h-10 rounded-full bg-forest-700 text-white font-bold flex items-center justify-center text-sm shadow-xs flex-shrink-0">
-                  S
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-bold text-xs text-slate-900 group-hover:text-forest-900 truncate">
-                    Sejal Soni
-                  </div>
-                  <div className="text-[11px] text-slate-500 truncate">
-                    sejalsoni372@gmail.com
-                  </div>
-                </div>
-                <div className="text-forest-700 text-xs font-bold opacity-0 group-hover:opacity-100 transition">
-                  Continue →
-                </div>
-              </button>
-
-              {/* Option 2: AgroSense Agronomist */}
-              <button
-                type="button"
-                onClick={() =>
-                  completeGoogleLogin(
-                    'grower.google@agrosense.ai',
-                    'AgroSense Research Agronomist',
-                    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'
-                  )
-                }
-                disabled={loading}
-                className="w-full p-3 rounded-2xl border border-slate-200 hover:border-forest-600 hover:bg-forest-50/50 transition flex items-center space-x-3 text-left group"
-              >
-                <div className="w-10 h-10 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-sm shadow-xs flex-shrink-0">
-                  A
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-bold text-xs text-slate-900 group-hover:text-forest-900 truncate">
-                    AgroSense Research Agronomist
-                  </div>
-                  <div className="text-[11px] text-slate-500 truncate">
-                    grower.google@agrosense.ai
-                  </div>
-                </div>
-                <div className="text-forest-700 text-xs font-bold opacity-0 group-hover:opacity-100 transition">
-                  Continue →
-                </div>
-              </button>
-            </div>
-
-            {/* Option 3: Custom Google Email Input */}
-            <div className="pt-2 border-t border-slate-100">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
-                Or Enter Any Other Google / Gmail Email
-              </span>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (customGoogleEmail) {
-                    completeGoogleLogin(
-                      customGoogleEmail,
-                      customGoogleName || customGoogleEmail.split('@')[0]
-                    );
-                  }
-                }}
-                className="space-y-2.5"
-              >
-                <div className="grid grid-cols-2 gap-2">
-                  <input
-                    type="text"
-                    value={customGoogleName}
-                    onChange={(e) => setCustomGoogleName(e.target.value)}
-                    placeholder="Your Name"
-                    className="px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-forest-600 focus:bg-white"
-                  />
-                  <input
-                    type="email"
-                    required
-                    value={customGoogleEmail}
-                    onChange={(e) => setCustomGoogleEmail(e.target.value)}
-                    placeholder="user@gmail.com"
-                    className="px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-forest-600 focus:bg-white"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  disabled={loading || !customGoogleEmail}
-                  className="w-full py-2.5 px-3 bg-slate-900 hover:bg-black text-white text-xs font-bold rounded-xl transition flex items-center justify-center space-x-1.5 disabled:opacity-50 shadow-xs"
-                >
-                  <UserCheck className="w-3.5 h-3.5" />
-                  <span>{loading ? 'Authenticating...' : 'Sign In with This Account'}</span>
-                </button>
-              </form>
-            </div>
-
-            {/* Informative Firebase Notice */}
-            <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-[11px] text-slate-500 leading-relaxed">
-              <strong className="text-slate-700">Firebase Configuration:</strong> Project credentials read from <code>.env</code> (secured in <code>.gitignore</code>). To enable cloud OAuth popup in Google's cloud, activate Google under <a href="https://console.firebase.google.com/project/agrosenseai-d4f4d/authentication/providers" target="_blank" rel="noopener noreferrer" className="text-forest-700 underline font-semibold">Firebase Console &gt; Authentication</a>.
-            </div>
-
-            {/* Cancel Action */}
-            <div className="flex justify-end pt-1">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowGoogleChooser(false);
-                  setError('Google sign-in was cancelled. Please choose your Google account to open the dashboard.');
-                }}
-                className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-900 transition"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
