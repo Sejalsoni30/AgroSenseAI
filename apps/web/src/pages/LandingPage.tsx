@@ -27,7 +27,10 @@ import {
   FileCheck,
   RefreshCw,
   ExternalLink,
-  BookOpen
+  BookOpen,
+  Sprout,
+  Globe,
+  Play
 } from 'lucide-react';
 import { Footer } from '../components/Footer';
 import { ConfidenceBadge } from '../components/ConfidenceBadge';
@@ -324,13 +327,13 @@ export const LandingPage: React.FC = () => {
           <div className="hidden sm:flex items-center space-x-3">
             <Link
               to="/auth?tab=login"
-              className="px-4 py-2.5 text-xs font-bold text-slate-700 hover:text-forest-700 hover:bg-slate-50 rounded-xl transition"
+              className="px-4 py-2 text-xs font-bold text-slate-700 hover:text-forest-700 hover:bg-slate-50 rounded-full transition"
             >
               Login
             </Link>
             <Link
               to="/auth?tab=register"
-              className="px-5 py-2.5 bg-forest-700 hover:bg-forest-800 text-white text-xs font-bold rounded-xl transition shadow-md shadow-forest-900/15 flex items-center space-x-1.5"
+              className="px-5 py-2.5 bg-[#0e5c2f] hover:bg-[#0a4724] text-white text-xs font-bold rounded-full transition shadow-md shadow-emerald-950/15 flex items-center space-x-1.5"
             >
               <span>Get Started</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -395,80 +398,155 @@ export const LandingPage: React.FC = () => {
       {/* ========================================================= */}
       {/* 2. HERO SECTION */}
       {/* ========================================================= */}
-      <section id="hero" className="relative pt-12 pb-20 lg:pt-20 lg:pb-32 overflow-hidden bg-gradient-to-b from-forest-50/50 via-slate-50 to-white">
-        {/* Subtle Decorative Background Rings */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-forest-100/40 rounded-full blur-3xl pointer-events-none" />
+      <section
+        id="hero"
+        className="relative pt-8 pb-8 lg:pt-14 lg:pb-12 overflow-hidden bg-gradient-to-br from-[#ebf8f0] via-[#f7fbf8] to-[#edf7f1]"
+      >
+        {/* Decorative Top-Right Botanical Leaves */}
+        <img
+          src="/botanical-top-right-hd.png"
+          alt="Botanical foliage accent"
+          className="absolute -top-1 right-0 w-32 sm:w-48 lg:w-64 pointer-events-none z-20 select-none opacity-95 drop-shadow-sm"
+        />
 
+        {/* Decorative Bottom-Left Botanical Leaves */}
+        <img
+          src="/botanical-bottom-left-hd.png"
+          alt="Botanical foliage accent"
+          className="absolute bottom-16 sm:bottom-20 left-0 w-28 sm:w-44 lg:w-56 pointer-events-none z-20 select-none opacity-95 drop-shadow-sm"
+        />
+
+        {/* Subtle Ambient Radial Glows */}
+        <div className="absolute top-1/4 left-1/3 w-[500px] h-[500px] bg-emerald-200/25 rounded-full blur-3xl pointer-events-none" />
+
+        {/* Agricultural Field with Sprinkler & Telemetry Nodes (Right Side Background) */}
+        <div className="absolute top-0 right-0 bottom-0 w-full lg:w-[58%] pointer-events-none overflow-hidden z-0 flex items-center justify-end">
+          <div className="relative w-full h-full">
+            <img
+              src="/hero-field-clean-hd.png"
+              alt="Agricultural Field with Smart Sprinkler Irrigation"
+              className="w-full h-full object-cover object-left-top opacity-95"
+            />
+            {/* Soft gradient blend into left text area */}
+            <div className="absolute inset-y-0 left-0 w-28 sm:w-44 lg:w-60 bg-gradient-to-r from-[#f7fbf8] via-[#f7fbf8]/70 to-transparent pointer-events-none" />
+            {/* Top edge subtle fade */}
+            <div className="absolute top-0 inset-x-0 h-14 bg-gradient-to-b from-[#f7fbf8]/40 to-transparent pointer-events-none" />
+          </div>
+        </div>
+
+        {/* Hero Content Container */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-3xl mx-auto space-y-6">
+          <div className="max-w-2xl text-left space-y-6 pt-4 pb-8 lg:py-10">
             {/* Pill Badge */}
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-forest-100 border border-forest-300/80 text-forest-900 text-xs font-bold shadow-xs">
-              <ShieldCheck className="w-4 h-4 text-forest-700" />
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#dcf2e4] border border-[#b2e4c2] text-[#0d5c2e] text-xs font-bold shadow-xs">
+              <Leaf className="w-3.5 h-3.5 text-[#0d5c2e]" />
               <span>FAO-56 Hydrologic Science • Conformal Uncertainty Quantification</span>
             </div>
 
-            {/* Main Heading */}
-            <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-slate-950 leading-tight">
-              Smarter Irrigation. <br className="hidden sm:inline" />
-              <span className="text-forest-700">Better Decisions.</span> <br />
+            {/* Main Bold Headline */}
+            <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-black tracking-tight text-[#0a2e18] leading-[1.12]">
+              Smarter Irrigation.<br />
+              <span className="text-[#15803d]">Better Decisions.</span><br />
               Sustainable Farming.
             </h1>
 
-            {/* Description */}
-            <p className="text-base sm:text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto">
+            {/* Subtitle */}
+            <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl font-normal">
               Empowering farmers with intelligent irrigation recommendations, reliable agricultural data and explainable AI.
             </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-2">
+            {/* Pill Action Buttons */}
+            <div className="flex flex-wrap items-center gap-3.5 pt-2">
               <Link
                 to="/auth?tab=register"
-                className="w-full sm:w-auto px-8 py-4 bg-forest-700 hover:bg-forest-800 text-white font-extrabold rounded-2xl text-sm transition shadow-lg shadow-forest-900/20 flex items-center justify-center space-x-2"
+                className="inline-flex items-center justify-center space-x-2.5 px-6 sm:px-7 py-3.5 bg-[#0e5c2f] hover:bg-[#0a4724] text-white font-bold rounded-full text-xs sm:text-sm transition shadow-lg shadow-emerald-950/20 group"
               >
+                <Leaf className="w-4 h-4 text-emerald-200" />
                 <span>Get Started Free</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </Link>
               <button
                 onClick={() => scrollTo('features')}
-                className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold rounded-2xl text-sm transition shadow-xs"
+                className="inline-flex items-center justify-center space-x-2 px-6 sm:px-7 py-3.5 bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-bold rounded-full text-xs sm:text-sm transition shadow-xs"
               >
-                Explore Features
+                <Play className="w-3 h-3 text-[#15803d] fill-[#15803d]" />
+                <span>Explore Features</span>
               </button>
             </div>
           </div>
+        </div>
 
-          {/* Hero Highlights Triad */}
-          <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-5 max-w-4xl mx-auto">
-            <div className="p-5 bg-white/90 backdrop-blur-md rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
-              <div className="w-12 h-12 rounded-xl bg-forest-100 text-forest-800 flex items-center justify-center flex-shrink-0">
-                <Droplet className="w-6 h-6 text-forest-700" />
+        {/* Floating Glassmorphic 4-Column Feature Bar */}
+        <div className="relative z-20 max-w-5xl mx-auto px-4 mt-8 sm:mt-12">
+          <div className="bg-white/90 backdrop-blur-md rounded-2xl sm:rounded-full border border-emerald-100 shadow-xl shadow-emerald-950/5 p-4 sm:px-8 sm:py-3.5 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0 divide-y sm:divide-y-0 sm:divide-x divide-slate-200">
+            {/* Item 1 */}
+            <div className="flex items-center space-x-3 sm:px-4 w-full sm:w-auto justify-center sm:justify-start">
+              <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                <Cpu className="w-5 h-5 text-emerald-600" />
               </div>
-              <div>
-                <h2 className="font-bold text-sm text-slate-900">Intelligent Irrigation</h2>
-                <p className="text-xs text-slate-500 mt-0.5">Dual-method FAO-56 Penman-Monteith & Hargreaves</p>
+              <div className="text-left">
+                <p className="text-xs sm:text-sm font-bold text-slate-800 leading-tight">AI-Powered</p>
+                <p className="text-xs text-slate-500 font-medium">Insights</p>
               </div>
             </div>
 
-            <div className="p-5 bg-white/90 backdrop-blur-md rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
-              <div className="w-12 h-12 rounded-xl bg-purple-100 text-purple-800 flex items-center justify-center flex-shrink-0">
-                <Sparkles className="w-6 h-6 text-purple-700" />
+            {/* Item 2 */}
+            <div className="flex items-center space-x-3 sm:px-4 w-full sm:w-auto justify-center sm:justify-start pt-3 sm:pt-0">
+              <div className="w-9 h-9 rounded-xl bg-sky-50 text-sky-500 flex items-center justify-center flex-shrink-0">
+                <Droplet className="w-5 h-5 fill-sky-500/20" />
               </div>
-              <div>
-                <h2 className="font-bold text-sm text-slate-900">Explainable AI</h2>
-                <p className="text-xs text-slate-500 mt-0.5">Wachter counterfactuals in English & Hindi</p>
+              <div className="text-left">
+                <p className="text-xs sm:text-sm font-bold text-slate-800 leading-tight">Smart Water</p>
+                <p className="text-xs text-slate-500 font-medium">Management</p>
               </div>
             </div>
 
-            <div className="p-5 bg-white/90 backdrop-blur-md rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
-              <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center flex-shrink-0">
-                <Activity className="w-6 h-6 text-blue-700" />
+            {/* Item 3 */}
+            <div className="flex items-center space-x-3 sm:px-4 w-full sm:w-auto justify-center sm:justify-start pt-3 sm:pt-0">
+              <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                <Sprout className="w-5 h-5 text-emerald-600" />
               </div>
-              <div>
-                <h2 className="font-bold text-sm text-slate-900">Water Optimization</h2>
-                <p className="text-xs text-slate-500 mt-0.5">Calibrated abstention eliminates over-watering</p>
+              <div className="text-left">
+                <p className="text-xs sm:text-sm font-bold text-slate-800 leading-tight">Increased Crop</p>
+                <p className="text-xs text-slate-500 font-medium">Productivity</p>
+              </div>
+            </div>
+
+            {/* Item 4 */}
+            <div className="flex items-center space-x-3 sm:px-4 w-full sm:w-auto justify-center sm:justify-start pt-3 sm:pt-0">
+              <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                <Globe className="w-5 h-5 text-emerald-600" />
+              </div>
+              <div className="text-left">
+                <p className="text-xs sm:text-sm font-bold text-slate-800 leading-tight">Eco-Friendly</p>
+                <p className="text-xs text-slate-500 font-medium">Agriculture</p>
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Bottom Wavy Ribbon Transition */}
+        <div className="w-full overflow-hidden leading-none pointer-events-none mt-6 sm:mt-10">
+          <svg
+            className="relative block w-full h-12 sm:h-16 lg:h-20"
+            viewBox="0 0 1200 120"
+            preserveAspectRatio="none"
+          >
+            <path
+              d="M0,0 C200,60 400,-20 650,40 C900,100 1050,30 1200,50 L1200,120 L0,120 Z"
+              fill="#a7f3d0"
+              fillOpacity="0.45"
+            />
+            <path
+              d="M0,25 C250,80 500,20 750,60 C1000,100 1100,50 1200,70 L1200,120 L0,120 Z"
+              fill="#34d399"
+              fillOpacity="0.35"
+            />
+            <path
+              d="M0,50 C300,100 600,45 850,80 C1050,110 1150,70 1200,85 L1200,120 L0,120 Z"
+              fill="#ffffff"
+            />
+          </svg>
         </div>
       </section>
 
