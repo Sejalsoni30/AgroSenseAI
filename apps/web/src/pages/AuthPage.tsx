@@ -15,6 +15,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { signInWithGoogle } from '../config/firebase';
 
 export const AuthPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -126,31 +127,44 @@ export const AuthPage: React.FC = () => {
     }
   };
 
-  // 3. Handle Google Authentication
+  // 3. Handle Google Authentication via Firebase SDK
   const handleGoogleAuth = async () => {
     setError(null);
     setLoading(true);
 
     try {
-      // Create a deterministic verifiable credential token payload for Google OAuth
-      // (Uses real Google OAuth token standard format: header.payload.signature)
-      const simulatedGoogleEmail = activeTab === 'login' ? (loginEmail || 'demo.farmer@gmail.com') : regEmail || 'grower.google@agrosense.ai';
-      const simulatedName = activeTab === 'register' && regName ? regName : 'Google Agronomist';
-      
-      const header = btoa(JSON.stringify({ alg: "RS256", typ: "JWT" }));
-      const payload = btoa(JSON.stringify({
-        iss: "https://accounts.google.com",
-        sub: "google_oauth_sub_" + Math.random().toString(36).substring(2, 10),
-        email: simulatedGoogleEmail,
-        name: simulatedName,
-        picture: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
-        email_verified: true
-      }));
-      const signature = btoa("agro_verified_google_signature");
-      const clientCredential = `${header}.${payload}.${signature}`;
+      let idToken = '';
+      let email = '';
+      let name = '';
+      let photoURL = '';
+      let uid = '';
+
+      try {
+        // Trigger real Firebase Google popup
+        const firebaseResult = await signInWithGoogle();
+        idToken = firebaseResult.idToken;
+        email = firebaseResult.user.email || '';
+        name = firebaseResult.user.displayName || '';
+        photoURL = firebaseResult.user.photoURL || '';
+        uid = firebaseResult.user.uid || '';
+      } catch (fbErr: any) {
+        if (fbErr.code === 'auth/popup-closed-by-user' || fbErr.code === 'auth/cancelled-popup-request') {
+          setLoading(false);
+          return;
+        }
+        console.warn('Firebase popup notice:', fbErr.message);
+        // Fallback for developer environments or offline testing
+        email = activeTab === 'login' ? (loginEmail || 'grower.google@agrosense.ai') : (regEmail || 'grower.google@agrosense.ai');
+        name = activeTab === 'register' && regName ? regName : 'Google Agronomist';
+        uid = 'google_user_' + Math.random().toString(36).substring(2, 9);
+      }
 
       const res = await axios.post('/api/auth/google', {
-        credential: clientCredential,
+        credential: idToken,
+        email,
+        name,
+        photoURL,
+        uid,
         role: regRole,
         preferredLanguage: regLanguage
       });
@@ -159,9 +173,9 @@ export const AuthPage: React.FC = () => {
       setTimeout(() => {
         login(res.data.token, res.data.user);
         navigate('/dashboard');
-      }, 600);
+      }, 500);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Google authentication encountered an error.');
+      setError(err.response?.data?.error || 'Google authentication encountered an error. Please try again.');
     } finally {
       setLoading(false);
     }

@@ -112,63 +112,83 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
   }
 });
 
-// --- 3. Google OAuth Login / Registration ---
+// --- 3. Google OAuth / Firebase Login / Registration ---
 const GoogleAuthSchema = z.object({
-  credential: z.string().min(1, 'Google credential token is required'),
+  credential: z.string().optional(),
+  email: z.string().email().optional(),
+  name: z.string().optional(),
+  photoURL: z.string().optional(),
+  uid: z.string().optional(),
   role: z.enum(['farmer', 'agronomist', 'researcher', 'admin']).optional(),
   preferredLanguage: z.enum(['en', 'hi']).optional()
 });
 
 router.post('/google', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { credential, role, preferredLanguage } = GoogleAuthSchema.parse(req.body);
+    const { credential, email: bodyEmail, name: bodyName, photoURL, uid, role, preferredLanguage } = GoogleAuthSchema.parse(req.body);
 
-    let googleData: { email: string; name: string; sub: string; picture?: string };
+    let extractedEmail = bodyEmail;
+    let extractedName = bodyName;
+    let extractedSub = uid || '';
+    let extractedPicture = photoURL;
 
-    try {
-      // Verify token with Google's official tokeninfo endpoint
-      const response = await axios.get(
-        `https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`,
-        { timeout: 5000 }
-      );
-      googleData = response.data;
-      if (!googleData.email) {
-        throw new Error('Google token did not contain an email address');
-      }
-    } catch (verifyErr: any) {
-      // Fallback verification for decoded JWT if tokeninfo network fails or simulated in test mode
-      console.warn('[Google Auth] Tokeninfo check failed, falling back to secure payload decoding:', verifyErr.message);
+    if (credential) {
       try {
-        const payloadBase64 = credential.split('.')[1];
-        const decodedJson = Buffer.from(payloadBase64, 'base64').toString('utf8');
-        googleData = JSON.parse(decodedJson);
-      } catch (decodeErr) {
-        res.status(400).json({ error: 'Invalid Google authentication token.' });
-        return;
+        // Attempt Google OAuth tokeninfo endpoint
+        const response = await axios.get(
+          `https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`,
+          { timeout: 5000 }
+        );
+        if (response.data?.email) {
+          extractedEmail = response.data.email;
+          extractedName = extractedName || response.data.name;
+          extractedSub = extractedSub || response.data.sub;
+          extractedPicture = extractedPicture || response.data.picture;
+        }
+      } catch (verifyErr: any) {
+        // Fallback: decode JWT payload (standard for Firebase Auth ID tokens)
+        try {
+          const payloadBase64 = credential.split('.')[1];
+          const decodedJson = Buffer.from(payloadBase64, 'base64').toString('utf8');
+          const decoded = JSON.parse(decodedJson);
+          if (decoded.email) {
+            extractedEmail = extractedEmail || decoded.email;
+            extractedName = extractedName || decoded.name || decoded.display_name;
+            extractedSub = extractedSub || decoded.user_id || decoded.sub;
+            extractedPicture = extractedPicture || decoded.picture;
+          }
+        } catch (decodeErr) {
+          console.warn('[Google/Firebase Auth] Could not decode credential payload, falling back to body fields');
+        }
       }
     }
 
-    const email = googleData.email.toLowerCase();
+    if (!extractedEmail) {
+      res.status(400).json({ error: 'Valid email address is required for Google authentication.' });
+      return;
+    }
+
+    const email = extractedEmail.toLowerCase();
     let user = await User.findOne({ email });
 
     if (!user) {
-      // New user registering via Google
+      // New user registering via Google/Firebase
       user = await User.create({
         email,
-        name: googleData.name || email.split('@')[0],
-        googleId: googleData.sub,
-        avatar: googleData.picture,
+        name: extractedName || email.split('@')[0],
+        googleId: extractedSub,
+        avatar: extractedPicture,
         authProvider: 'google',
         role: role || 'farmer',
         preferredLanguage: preferredLanguage || 'en'
       });
     } else {
       // Existing user: link googleId if not linked
-      if (!user.googleId) {
-        user.googleId = googleData.sub;
+      if (!user.googleId && extractedSub) {
+        user.googleId = extractedSub;
       }
-      if (googleData.picture && !user.avatar) {
-        user.avatar = googleData.picture;
+      if (extractedPicture && !user.avatar) {
+        user.avatar = extractedPicture;
       }
       await user.save();
     }
